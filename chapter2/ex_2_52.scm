@@ -1,0 +1,62 @@
+; a 
+(define (wave)
+  (define (coords->segs coords)
+    (if (null? (cdr coords))
+      '()
+      (cons (make-segment (car coords) (cadr coords))
+            (coords->segs (cdr coords)))))
+  (let ((list-of-coords (list (list (make-vect 0.45 1.0)
+                                    (make-vect 0.4 0.875)
+                                    (make-vect 0.45 0.775)
+                                    (make-vect 0.45 0.75)
+                                    (make-vect 0.35 0.75)
+                                    (make-vect 0.2 0.6)
+                                    (make-vect 0.0 0.775))
+                                    (make-vect 0.55 0.85))
+                              ; --------smile!!!!!--------
+                              (list (make-vect 0.45 0.85)
+                                    (make-vect 0.5 0.8)
+                                    (make-vect 0.55 0.85))
+                              ; --------------------------
+                              (list (make-vect 0.55 1.0)
+                                    (make-vect 0.6 0.875)
+                                    (make-vect 0.55 0.775)
+                                    (make-vect 0.55 0.75)
+                                    (make-vect 0.65 0.75)
+                                    (make-vect 1.0 0.4))
+                              (list (make-vect 0.0 0.7)
+                                    (make-vect 0.2 0.5)
+                                    (make-vect 0.4 0.65)
+                                    (make-vect 0.4 0.4)
+                                    (make-vect 0.3 0.0))
+                              (list (make-vect 1.0 0.35)
+                                    (make-vect 0.6 0.65)
+                                    (make-vect 0.6 0.4)
+                                    (make-vect 0.7 0.0))
+                              (list (make-vect 0.4 0.0)
+                                    (make-vect 0.5 0.35)
+                                    (make-vect 0.6 0.0))
+                                )))
+    (segments->painter (accumulate append 
+                                   '() 
+                                   (map coords->segs list-of-coords)))))
+
+; b
+(define (corner-split painter n)
+  (if (= n 0)
+    painter
+    (beside (below painter 
+                   (up-split painter (- n 1)))
+            (below (right-split painter (- n 1)) 
+                   (corner-split painter (- n 1))))))
+; c
+(define (square-of-four tl tr bl br) 
+  (lambda (painter)
+    (let ((top (beside (tl painter) (tr painter))) 
+          (bottom (beside (bl painter) (br painter))))
+      (below bottom top))))
+
+(define (square-limit painter n)
+  (let ((combine4 (square-of-four flip-vert rotate180
+                                  identity flip-horiz))) 
+    (combine4 (corner-split painter n))))
