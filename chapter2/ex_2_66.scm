@@ -1,0 +1,8 @@
+(define (loookup given-key set-of-records) 
+  (cond ((null? set-of-records) false)
+        ((= given-key (key (entry set-of-records)))
+         (entry set-of-records)) 
+        ((< given-key (key (entry set-of-records))
+         (loookup given-key (left-branch set-of-recordset))) 
+        ((> given-key (key (entry set-of-recordset)))
+         (loookup given-key (right-branch set-of-recordset))))))
