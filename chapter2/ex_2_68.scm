@@ -1,0 +1,17 @@
+(define (encode message tree) 
+  (if (null? message)
+    '()
+    (append (encode-symbol (car message) tree)
+            (encode (cdr message) tree))))
+
+(define (element-of-tree? symbol tree)
+  (memq symbol (symbols tree)))
+
+(define (encode-symbol symbol branch)
+  (cond ((leaf? branch)
+         '())
+        ((element-of-tree? symbol (left-branch branch))
+         (cons 0 (encode-symbol symbol (left-branch branch))))
+        ((element-of-tree? symbol (right-branch branch))
+         (cons 1 (encode-symbol symbol (right-branch branch))))
+        (else (error "This symbol is not an element of the tree."))))
